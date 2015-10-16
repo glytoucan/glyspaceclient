@@ -1,0 +1,82 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:context="http://www.springframework.org/schema/context"
+ xsi:schemaLocation="http://www.springframework.org/schema/beans
+ http://www.springframework.org/schema/beans/spring-beans.xsd
+ http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+ 
+ <bean id="propertyConfigurer"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+        	<list>
+           		<value>classpath:client.properties</value>
+       		</list>
+        </property>
+ </bean>
+ 
+ <context:annotation-config/>
+ 
+ <bean name="javaconfig" class="org.glyspace.client.config.ClientConfig"/>
+    
+ <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+ 	<property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+                    <property name="marshaller" ref="jaxb2Marshaller"/>
+                    <property name="unmarshaller" ref="jaxb2Marshaller"/>
+                </bean>
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter" />
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+                <bean class="org.glyspace.client.config.BufferedImageHttpMessageConverter"/>
+            </list>
+    </property>
+    <property name="errorHandler" ref="customErrorHandler" />
+ </bean>
+ <bean id="jaxbMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound">
+            <list>
+                <value>org.glyspace.registry.view.User</value>
+                <value>org.glyspace.registry.view.Glycan</value>
+                <value>org.glyspace.registry.database.UserEntity</value>
+                <value>org.glyspace.registry.database.GlycanEntity</value>
+                <value>org.glyspace.registry.view.GlycanList</value>
+                <value>org.glyspace.registry.view.RoleList</value>
+                <value>org.glyspace.registry.view.UserList</value>
+                <value>org.glyspace.registry.view.GlycanResponse</value>
+                <value>org.glyspace.registry.view.Confirmation</value>
+                <value>org.glyspace.registry.view.search.CompositionSearchInput</value>
+                <value>org.glyspace.registry.view.search.Range</value>
+                <value>org.glyspace.registry.view.GlycanResponseList</value>
+                <value>org.glyspace.registry.view.GlycanInputList</value>
+            </list>
+        </property>
+        <property name="adapters">
+   			<list>
+        		 <bean class="org.glyspace.registry.view.CDATAAdapter"/>
+  		 	</list>
+		</property>
+ </bean>
+ 
+ <bean id="customErrorHandler" class="org.glyspace.client.exception.CustomResponseErrorHandler"/>
+ 
+ <bean id="userRestClient" class="org.glyspace.client.UserRestClientImpl">
+ 	<property name="rootUrl" value="${glyspace.url}" />
+ </bean>
+ 
+ <bean id="glycanRestClient" class="org.glyspace.client.GlycanRestClientImpl">
+ 	<property name="rootUrl" value="${glyspace.url}" />
+ </bean>
+ 
+ <bean id="settingsRestClient" class="org.glyspace.client.SettingsRestClientImpl">
+ 	<property name="rootUrl" value="${glyspace.url}" />
+ </bean>
+ 
+ <bean id="contributorRestClient" class="org.glyspace.client.ContributorRestClientImpl">
+ 	<property name="rootUrl" value="${glyspace.url}" />
+ </bean>
+ 
+ <bean id="motifRestClient" class="org.glyspace.client.MotifRestClientImpl">
+ 	<property name="rootUrl" value="${glyspace.url}" />
+ </bean>
+ 
+</beans> 
